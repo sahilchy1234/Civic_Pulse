@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Solution Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .solution-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+        .solution-card.verified {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .solution-card.pending {
+            border-color: #ffc107;
+            background: #fff3cd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix Solution Status Tool</h1>
+        <p>This tool will fix solutions that have <code>isVerified=true</code> but wrong status.</p>
+        
+        <div id="status" class="status info">
+            Ready to fix solution statuses. Click the button below to start.
+        </div>
+        
+        <button id="debugBtn" class="btn" onclick="debugSolutions()">
+            🔍 Debug Solutions
+        </button>
+        
+        <button id="fixBtn" class="btn btn-danger" onclick="fixSolutions()" style="display: none;">
+            🔧 Fix Solution Statuses
+        </button>
+        
+        <div id="log" class="log" style="display: none;"></div>
+        <div id="solutions" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: 'AIzaSyDKOI5Kz0FgM58X0JmLbk32NxUMU_iXOgg',
+            authDomain: 'civicsense-cca11-vnxyc.appspot.com',
+            projectId: 'civicsense-cca11',
+            storageBucket: 'civicsense-cca11-vnxyc.appspot.com',
+            messagingSenderId: '911825802149',
+            appId: '1:911825802149:web:54e85ddfb788626bae8e4c',
+            measurementId: 'G-6BY32VCV3X'
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let solutionsToFix = [];
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.style.display = 'block';
+            logDiv.textContent += message + '\n';
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        async function debugSolutions() {
+            const btn = document.getElementById('debugBtn');
+            const logDiv = document.getElementById('log');
+            const solutionsDiv = document.getElementById('solutions');
+            const fixBtn = document.getElementById('fixBtn');
+            
+            btn.disabled = true;
+            btn.textContent = '🔍 Debugging...';
+            logDiv.textContent = '';
+            logDiv.style.display = 'block';
+            solutionsDiv.innerHTML = '';
+            solutionsToFix = [];
+            
+            try {
+                updateStatus('🔍 Loading all solutions...', 'info');
+                log('🔍 Loading all solutions from database...');
+                
+                // Get all solutions
+                const solutionsSnapshot = await db.collection('solutions').get();
+                
+                log(`📊 Found ${solutionsSnapshot.docs.length} total solutions`);
+                
+                solutionsDiv.innerHTML = '<h3>📋 All Solutions:</h3>';
+                
+                for (const doc of solutionsSnapshot.docs) {
+                    const data = doc.data();
+                    const status = data.status || 'unknown';
+                    const isVerified = data.isVerified || false;
+                    const title = data.title || 'Untitled';
+                    const description = data.description || 'No description';
+                    
+                    // Check if this solution needs fixing
+                    const needsFix = isVerified === true && status !== 'SolutionStatus.verified';
+                    
+                    if (needsFix) {
+                        solutionsToFix.push({
+                            id: doc.id,
+                            data: data,
+                            currentStatus: status,
+                            isVerified: isVerified
+                        });
+                    }
+                    
+                    // Create solution card
+                    const card = document.createElement('div');
+                    card.className = `solution-card ${needsFix ? 'pending' : 'verified'}`;
+                    
+                    card.innerHTML = `
+                        <h4>${title} ${needsFix ? '🔧 NEEDS FIX' : ''}</h4>
+                        <p><strong>ID:</strong> ${doc.id}</p>
+                        <p><strong>Status:</strong> ${status}</p>
+                        <p><strong>Is Verified:</strong> ${isVerified}</p>
+                        <p><strong>Description:</strong> ${description.substring(0, 100)}${description.length > 100 ? '...' : ''}</p>
+                        <p><strong>User ID:</strong> ${data.userId || 'Unknown'}</p>
+                        <p><strong>Submitted At:</strong> ${data.submittedAt ? new Date(data.submittedAt.seconds * 1000).toLocaleString() : 'Unknown'}</p>
+                    `;
+                    
+                    solutionsDiv.appendChild(card);
+                    
+                    log(`📄 Solution ${doc.id}: status="${status}", isVerified=${isVerified} ${needsFix ? '🔧 NEEDS FIX' : ''}`);
+                }
+                
+                log(`\n📈 Summary:`);
+                log(`   - Total solutions: ${solutionsSnapshot.docs.length}`);
+                log(`   - Solutions that need fixing: ${solutionsToFix.length}`);
+                
+                if (solutionsToFix.length > 0) {
+                    updateStatus(`⚠️ Found ${solutionsToFix.length} solutions that need fixing!`, 'error');
+                    fixBtn.style.display = 'inline-block';
+                } else {
+                    updateStatus(`✅ All solutions have correct status!`, 'success');
+                }
+                
+            } catch (error) {
+                log(`❌ Debug failed: ${error.message}`);
+                updateStatus(`❌ Debug failed: ${error.message}`, 'error');
+                console.error('Debug error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔍 Debug Solutions';
+            }
+        }
+
+        async function fixSolutions() {
+            const btn = document.getElementById('fixBtn');
+            const logDiv = document.getElementById('log');
+            
+            btn.disabled = true;
+            btn.textContent = '🔧 Fixing...';
+            
+            try {
+                updateStatus('🔧 Fixing solution statuses...', 'info');
+                log(`🔧 Fixing ${solutionsToFix.length} solutions...`);
+                
+                const batch = db.batch();
+                
+                for (const solution of solutionsToFix) {
+                    log(`🔧 Fixing solution ${solution.id}: ${solution.currentStatus} → SolutionStatus.verified`);
+                    
+                    batch.update(db.collection('solutions').doc(solution.id), {
+                        status: 'SolutionStatus.verified',
+                        verifiedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        fixedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                await batch.commit();
+                
+                log(`✅ Successfully fixed ${solutionsToFix.length} solutions!`);
+                updateStatus(`✅ Successfully fixed ${solutionsToFix.length} solutions!`, 'success');
+                
+                // Refresh the debug
+                setTimeout(() => {
+                    debugSolutions();
+                }, 1000);
+                
+            } catch (error) {
+                log(`❌ Fix failed: ${error.message}`);
+                updateStatus(`❌ Fix failed: ${error.message}`, 'error');
+                console.error('Fix error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔧 Fix Solution Statuses';
+            }
+        }
+    </script>
+</body>
+</html>

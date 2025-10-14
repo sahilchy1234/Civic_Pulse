@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicSense - Dummy Data Viewer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .filters {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.9rem;
+        }
+
+        .issues-grid {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .issue-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .issue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .issue-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f8f9fa;
+        }
+
+        .issue-content {
+            padding: 20px;
+        }
+
+        .issue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .issue-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .issue-type {
+            background: #4facfe;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .issue-description {
+            color: #6c757d;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .issue-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e9ecef;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+
+        .issue-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-in-progress {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-resolved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .issue-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .upvotes {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        .upvotes i {
+            font-size: 1.1rem;
+        }
+
+        .location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .authority-notes {
+            background: #e8f5e8;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #28a745;
+        }
+
+        .authority-notes h4 {
+            color: #155724;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .authority-notes p {
+            color: #155724;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .issues-grid {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-city"></i> CivicSense</h1>
+            <p>Dummy Data Viewer - Community Issues Dashboard</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number" id="totalIssues">-</div>
+                <div class="stat-label">Total Issues</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="pendingIssues">-</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="inProgressIssues">-</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="resolvedIssues">-</div>
+                <div class="stat-label">Resolved</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label for="statusFilter">Status:</label>
+                <select id="statusFilter">
+                    <option value="">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolved</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="typeFilter">Type:</label>
+                <select id="typeFilter">
+                    <option value="">All</option>
+                    <option value="Pothole">Pothole</option>
+                    <option value="Garbage">Garbage</option>
+                    <option value="Water Leak">Water Leak</option>
+                    <option value="Street Light">Street Light</option>
+                    <option value="Traffic">Traffic</option>
+                    <option value="Road Damage">Road Damage</option>
+                    <option value="Sewage">Sewage</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Loading issues...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorMessage"></span>
+        </div>
+
+        <div id="issuesGrid" class="issues-grid" style="display: none;">
+            <!-- Issues will be populated here -->
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        // Your actual Firebase project configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDKOI5Kz0FgM58X0JmLbk32NxUMU_iXOgg",
+            authDomain: "civicsense-cca11-vnxyc.appspot.com",
+            projectId: "civicsense-cca11",
+            storageBucket: "civicsense-cca11-vnxyc.appspot.com",
+            messagingSenderId: "911825802149",
+            appId: "1:911825802149:web:54e85ddfb788626bae8e4c",
+            measurementId: "G-6BY32VCV3X"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let allIssues = [];
+        let filteredIssues = [];
+
+        // Load issues from Firebase
+        async function loadIssues() {
+            try {
+                const loadingEl = document.getElementById('loading');
+                const errorEl = document.getElementById('error');
+                const issuesGrid = document.getElementById('issuesGrid');
+
+                // Show loading
+                loadingEl.style.display = 'block';
+                errorEl.style.display = 'none';
+                issuesGrid.style.display = 'none';
+
+                // Fetch issues from Firestore
+                const snapshot = await db.collection('issues')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                allIssues = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    allIssues.push({
+                        id: doc.id,
+                        ...data
+                    });
+                });
+
+                filteredIssues = [...allIssues];
+                displayIssues();
+                updateStats();
+
+                // Hide loading, show grid
+                loadingEl.style.display = 'none';
+                issuesGrid.style.display = 'grid';
+
+            } catch (error) {
+                console.error('Error loading issues:', error);
+                showError('Failed to load issues: ' + error.message);
+            }
+        }
+
+        function showError(message) {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const issuesGrid = document.getElementById('issuesGrid');
+
+            loadingEl.style.display = 'none';
+            issuesGrid.style.display = 'none';
+            errorEl.style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        function updateStats() {
+            const total = allIssues.length;
+            const pending = allIssues.filter(issue => issue.status === 'Pending').length;
+            const inProgress = allIssues.filter(issue => issue.status === 'In Progress').length;
+            const resolved = allIssues.filter(issue => issue.status === 'Resolved').length;
+
+            document.getElementById('totalIssues').textContent = total;
+            document.getElementById('pendingIssues').textContent = pending;
+            document.getElementById('inProgressIssues').textContent = inProgress;
+            document.getElementById('resolvedIssues').textContent = resolved;
+        }
+
+        function displayIssues() {
+            const issuesGrid = document.getElementById('issuesGrid');
+            
+            if (filteredIssues.length === 0) {
+                issuesGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: #6c757d;">
+                        <i class="fas fa-search fa-3x" style="margin-bottom: 20px; opacity: 0.5;"></i>
+                        <h3>No issues found</h3>
+                        <p>Try adjusting your filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            issuesGrid.innerHTML = filteredIssues.map(issue => createIssueCard(issue)).join('');
+        }
+
+        function createIssueCard(issue) {
+            const createdDate = new Date(issue.createdAt).toLocaleDateString();
+            const statusClass = issue.status.toLowerCase().replace(' ', '-');
+            
+            return `
+                <div class="issue-card">
+                    <img src="${issue.imageUrl || 'https://via.placeholder.com/400x200?text=No+Image'}" 
+                         alt="${issue.title}" 
+                         class="issue-image"
+                         onerror="this.src='https://via.placeholder.com/400x200?text=Image+Not+Found'">
+                    
+                    <div class="issue-content">
+                        <div class="issue-header">
+                            <div>
+                                <h3 class="issue-title">${issue.title}</h3>
+                                <span class="issue-type">${issue.issueType}</span>
+                            </div>
+                        </div>
+                        
+                        <p class="issue-description">${issue.description}</p>
+                        
+                        <div class="issue-meta">
+                            <div class="user-info">
+                                <img src="${issue.userProfileImageUrl || 'https://via.placeholder.com/35x35?text=U'}" 
+                                     alt="${issue.userName}" 
+                                     class="user-avatar"
+                                     onerror="this.src='https://via.placeholder.com/35x35?text=U'">
+                                <span class="user-name">${issue.userName}</span>
+                            </div>
+                            <span class="issue-status status-${statusClass}">${issue.statusEmoji || getStatusEmoji(issue.status)} ${issue.status}</span>
+                        </div>
+                        
+                        ${issue.authorityNotes ? `
+                            <div class="authority-notes">
+                                <h4><i class="fas fa-comment-dots"></i> Authority Notes:</h4>
+                                <p>${issue.authorityNotes}</p>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="issue-footer">
+                            <div class="upvotes">
+                                <i class="fas fa-heart"></i>
+                                <span>${issue.upvotes || 0} upvotes</span>
+                            </div>
+                            <div class="location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${createdDate}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getStatusEmoji(status) {
+            switch (status) {
+                case 'Pending': return '⏳';
+                case 'In Progress': return '🔧';
+                case 'Resolved': return '✅';
+                default: return '❓';
+            }
+        }
+
+        function filterIssues() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            filteredIssues = allIssues.filter(issue => {
+                const statusMatch = !statusFilter || issue.status === statusFilter;
+                const typeMatch = !typeFilter || issue.issueType === typeFilter;
+                return statusMatch && typeMatch;
+            });
+
+            displayIssues();
+        }
+
+        // Event listeners
+        document.getElementById('statusFilter').addEventListener('change', filterIssues);
+        document.getElementById('typeFilter').addEventListener('change', filterIssues);
+
+        // Load issues when page loads
+        document.addEventListener('DOMContentLoaded', loadIssues);
+    </script>
+</body>
+</html>

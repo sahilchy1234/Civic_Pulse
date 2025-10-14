@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicSense Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- Leaflet for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet MarkerCluster -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <!-- Leaflet Heat -->
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>🏛️ CivicSense</h1>
+                <p>Admin Panel</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required placeholder="admin@civicsense.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+                <div id="loginError" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="dashboard" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏛️ CivicSense</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-view="overview">
+                    <span class="icon">📊</span>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-item" data-view="map">
+                    <span class="icon">🗺️</span>
+                    <span>Issue Map</span>
+                </a>
+                <a href="#" class="nav-item" data-view="issues">
+                    <span class="icon">📋</span>
+                    <span>All Issues</span>
+                </a>
+                <a href="#" class="nav-item" data-view="pending">
+                    <span class="icon">⏳</span>
+                    <span>Pending</span>
+                </a>
+                <a href="#" class="nav-item" data-view="in-progress">
+                    <span class="icon">🔧</span>
+                    <span>In Progress</span>
+                </a>
+                <a href="#" class="nav-item" data-view="resolved">
+                    <span class="icon">✅</span>
+                    <span>Resolved</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn-logout">
+                    <span class="icon">🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 id="pageTitle">Overview</h1>
+                <div class="header-actions">
+                    <div class="user-info">
+                        <span id="userEmail"></span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Overview Section -->
+            <section id="overviewSection" class="content-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon pending">⏳</div>
+                        <div class="stat-info">
+                            <h3 id="pendingCount">0</h3>
+                            <p>Pending Issues</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon in-progress">🔧</div>
+                        <div class="stat-info">
+                            <h3 id="inProgressCount">0</h3>
+                            <p>In Progress</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon resolved">✅</div>
+                        <div class="stat-info">
+                            <h3 id="resolvedCount">0</h3>
+                            <p>Resolved</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon total">📊</div>
+                        <div class="stat-info">
+                            <h3 id="totalCount">0</h3>
+                            <p>Total Issues</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-section">
+                    <div class="card">
+                        <h3>Issues by Type</h3>
+                        <div id="issueTypeChart" class="chart-container"></div>
+                    </div>
+                    <div class="card">
+                        <h3>Recent Activity</h3>
+                        <div id="recentActivity" class="activity-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Issues Section -->
+            <section id="issuesSection" class="content-section" style="display: none;">
+                <div class="filters-bar">
+                    <input type="text" id="searchInput" placeholder="🔍 Search issues..." class="search-input">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="all">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                    <select id="typeFilter" class="filter-select">
+                        <option value="all">All Types</option>
+                    </select>
+                    <select id="sortBy" class="filter-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="upvotes">Most Upvoted</option>
+                    </select>
+                </div>
+
+                <div id="issuesGrid" class="issues-grid">
+                    <!-- Issues will be loaded here -->
+                </div>
+
+                <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
+            </section>
+
+            <!-- Map Section -->
+            <section id="mapSection" class="content-section" style="display: none;">
+                <div class="map-controls-card">
+                    <div class="map-header">
+                        <h2>🗺️ Issue Hotspot Map</h2>
+                        <p class="map-subtitle">Visualize where issues are reported most frequently</p>
+                    </div>
+                    
+                    <div class="map-controls">
+                        <div class="control-group">
+                            <label class="control-label">📍 View Mode</label>
+                            <div class="button-group">
+                                <button id="markerViewBtn" class="control-btn active" onclick="setMapView('markers')">
+                                    <span>📌</span> Markers
+                                </button>
+                                <button id="clusterViewBtn" class="control-btn" onclick="setMapView('cluster')">
+                                    <span>🎯</span> Clusters
+                                </button>
+                                <button id="heatViewBtn" class="control-btn" onclick="setMapView('heat')">
+                                    <span>🔥</span> Heatmap
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">🏷️ Filter by Status</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="showPending" checked onchange="updateMapFilters()">
+                                    <span class="status-indicator pending">⏳</span> Pending
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="showInProgress" checked onchange="updateMapFilters()">
+                                    <span class="status-indicator in-progress">🔧</span> In Progress
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="showResolved" checked onchange="updateMapFilters()">
+                                    <span class="status-indicator resolved">✅</span> Resolved
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">📊 Statistics</label>
+                            <div class="map-stats">
+                                <div class="stat-pill">
+                                    <span class="stat-icon">📍</span>
+                                    <span class="stat-value" id="mapTotalIssues">0</span>
+                                    <span class="stat-text">Total</span>
+                                </div>
+                                <div class="stat-pill">
+                                    <span class="stat-icon">👁️</span>
+                                    <span class="stat-value" id="mapVisibleIssues">0</span>
+                                    <span class="stat-text">Visible</span>
+                                </div>
+                                <div class="stat-pill">
+                                    <span class="stat-icon">🎯</span>
+                                    <span class="stat-value" id="mapHotspot">-</span>
+                                    <span class="stat-text">Hotspot</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-container-wrapper">
+                    <div id="mainMap" class="main-map"></div>
+                    <div class="map-legend">
+                        <h4>Legend</h4>
+                        <div class="legend-item">
+                            <div class="legend-marker pending"></div>
+                            <span>Pending Issues</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker in-progress"></div>
+                            <span>In Progress</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker resolved"></div>
+                            <span>Resolved Issues</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Issue Detail Modal -->
+    <div id="issueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Issue Details</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

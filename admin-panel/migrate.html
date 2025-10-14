@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migration Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Solution Verification Migration Tool</h1>
+        <p>This tool will update existing solutions with <code>status='verified'</code> to also have <code>isVerified=true</code>.</p>
+        
+        <div id="status" class="status info">
+            Ready to run migration. Click the button below to start.
+        </div>
+        
+        <button id="migrateBtn" class="btn" onclick="runMigration()">
+            🔄 Run Migration
+        </button>
+        
+        <div id="log" class="log" style="display: none;"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: 'AIzaSyDKOI5Kz0FgM58X0JmLbk32NxUMU_iXOgg',
+            authDomain: 'civicsense-cca11-vnxyc.appspot.com',
+            projectId: 'civicsense-cca11',
+            storageBucket: 'civicsense-cca11-vnxyc.appspot.com',
+            messagingSenderId: '911825802149',
+            appId: '1:911825802149:web:54e85ddfb788626bae8e4c',
+            measurementId: 'G-6BY32VCV3X'
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.style.display = 'block';
+            logDiv.textContent += message + '\n';
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        async function runMigration() {
+            const btn = document.getElementById('migrateBtn');
+            const logDiv = document.getElementById('log');
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Running Migration...';
+            logDiv.textContent = '';
+            logDiv.style.display = 'block';
+            
+            try {
+                updateStatus('🔄 Starting migration...', 'info');
+                log('🔄 Starting migration of verified solutions...');
+                
+                // Get all solutions with status='verified'
+                const solutionsSnapshot = await db.collection('solutions')
+                    .where('status', '==', 'verified')
+                    .get();
+                
+                log(`📊 Found ${solutionsSnapshot.docs.length} solutions with status='verified'`);
+                
+                let updatedCount = 0;
+                const batch = db.batch();
+                
+                for (const doc of solutionsSnapshot.docs) {
+                    const data = doc.data();
+                    
+                    // Check if isVerified field is missing or false
+                    if (!data.hasOwnProperty('isVerified') || data.isVerified === false) {
+                        log(`🔄 Updating solution ${doc.id}...`);
+                        
+                        batch.update(doc.ref, {
+                            isVerified: true,
+                            migratedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        updatedCount++;
+                    }
+                }
+                
+                if (updatedCount > 0) {
+                    await batch.commit();
+                    log(`✅ Successfully updated ${updatedCount} solutions with isVerified=true`);
+                    updateStatus(`✅ Migration completed! Updated ${updatedCount} solutions.`, 'success');
+                } else {
+                    log('✅ No solutions needed migration');
+                    updateStatus('✅ No solutions needed migration. All verified solutions already have isVerified=true.', 'success');
+                }
+                
+                log('🎉 Migration completed successfully!');
+                
+            } catch (error) {
+                log(`❌ Migration failed: ${error.message}`);
+                updateStatus(`❌ Migration failed: ${error.message}`, 'error');
+                console.error('Migration error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔄 Run Migration';
+            }
+        }
+    </script>
+</body>
+</html>

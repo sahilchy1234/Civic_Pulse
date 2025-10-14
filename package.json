@@ -1,0 +1,16 @@
+{
+  "name": "civicsense-dummy-data",
+  "version": "1.0.0",
+  "description": "Script to add dummy data to CivicSense Firebase project",
+  "main": "add_dummy_data.js",
+  "scripts": {
+    "start": "node add_dummy_data.js",
+    "add-data": "node add_dummy_data.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  },
+  "keywords": ["firebase", "dummy-data", "civicsense"],
+  "author": "Your Name",
+  "license": "MIT"
+}
