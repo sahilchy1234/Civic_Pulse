@@ -1,3 +1,4 @@
+
 # Civic Pulse 🏛️
 
 <div align="center">
@@ -129,8 +130,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/sahilchy1234/CiviPulse.git
-   cd CiviPulse
+   git clone https://github.com/sahilchy1234/Civic_Pulse.git
+   cd Civic_Pulse
    ```
 
 2. **Install dependencies**
@@ -162,7 +163,7 @@
 ## 🏗️ Project Architecture
 
 ```
-📦 CiviPulse
+📦 Civic_Pulse
 ├── 📂 lib/
 │   ├── 📂 config/          # App configuration
 │   ├── 📂 models/          # Data models
@@ -185,11 +186,13 @@
 
 | Category | Technology |
 |----------|------------|
-| **Frontend** | Flutter, Dart |
+| **Frontend** | Flutter, Dart (72.5%) |
 | **Backend** | Firebase (Auth, Firestore, Storage) |
+| **Web** | JavaScript (10.3%), HTML (7.5%), CSS (4.8%) |
 | **Maps** | Google Maps API |
 | **Admin Panel** | HTML, CSS, JavaScript |
 | **Authentication** | Google Sign-In |
+| **Native** | C++ (2.4%), CMake (1.9%) |
 
 </div>
 
@@ -223,6 +226,18 @@
 </tr>
 </table>
 
+## 📊 Project Stats
+
+<div align="center">
+  <img src="https://github-readme-stats.vercel.app/api/pin/?username=sahilchy1234&repo=Civic_Pulse&theme=radical" />
+</div>
+
+<div align="center">
+  <img src="https://img.shields.io/github/stars/sahilchy1234/Civic_Pulse?style=social" alt="GitHub Stars">
+  <img src="https://img.shields.io/github/forks/sahilchy1234/Civic_Pulse?style=social" alt="GitHub Forks">
+  <img src="https://img.shields.io/github/watchers/sahilchy1234/Civic_Pulse?style=social" alt="GitHub Watchers">
+</div>
+
 ## 🗺️ Roadmap
 
 ### Upcoming Features
@@ -236,7 +251,7 @@
 ## 🤝 Contributing
 
 <div align="center">
-  <img src="https://contrib.rocks/image?repo=sahilchy1234/CiviPulse" />
+  <img src="https://contrib.rocks/image?repo=sahilchy1234/Civic_Pulse" />
 </div>
 
 We welcome contributions! Here's how you can help:
@@ -268,8 +283,8 @@ We welcome contributions! Here's how you can help:
 <td>
 
 ### 💬 Get Help
-- [🐛 Report Issues](https://github.com/sahilchy1234/CiviPulse/issues)
-- [💡 Feature Requests](https://github.com/sahilchy1234/CiviPulse/discussions)
+- [🐛 Report Issues](https://github.com/sahilchy1234/Civic_Pulse/issues)
+- [💡 Feature Requests](https://github.com/sahilchy1234/Civic_Pulse/discussions)
 - [📧 Contact Support](mailto:sahilalomchoudhury031@gmail.com)
 
 </td>
@@ -278,7 +293,7 @@ We welcome contributions! Here's how you can help:
 
 ## 📝 License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.[1]
 
 ```
 MIT License - feel free to use this project for personal and commercial purposes.
@@ -290,7 +305,9 @@ MIT License - feel free to use this project for personal and commercial purposes
   
 **Special Thanks To:**
 
-[![Flutter](https://img.shields.io/badge/Flutter-Team-blue?![Firebase](https://img.shields.io/badge/Firebase-Team-orange?style=flat-square&logohttps://img.shields.io/badge/Google-Maps-green amazing open-source community! 🌟*
+[![Flutter](https://img.shields.io/badge/Flutter-Team-blue?style=flatebase](https://img.shields.io/badge/Firebase-Team-orange?style=flat-square&logohttps://img.shields.io/badge/Google-Maps-green?
+
+*And the amazing open-source community! 🌟*
 
 </div>
 
@@ -300,24 +317,12 @@ MIT License - feel free to use this project for personal and commercial purposes
 
 **Sahil Alom Choudhury** - *Project Maintainer*
 
-[![Email](https://img.shields.io/badge/Email-sahilalomchoudhury031@gmail.com-red?style=for-the-badge&logo=gmail&https://img.shields.io/badge/GitHub-sahilchy1234-black?style=forhields.io/badge/Phone-+91_8099750973iv>
-
-***
+[![Email](https://img.shields.io/badge/Email-sahilalomchoudhury031@gmail.com-red?style=for-https://img.shields.io/badge/GitHub-sahilchy1234-black?style=for-![Phone](https://img.shields.io/badge/Phone-+91_8099750973-green?style=for-the-***
 
 <div align="center">
   <h3>🏛️ Building Better Communities Together 🏛️</h3>
   <p><i>Made with ❤️ by developers who care about civic engagement</i></p>
   
-  **[⭐ Star this repo](https://github.com/sahilchy1234/CiviPulse) | [🔄 Fork it](https://github.com/sahilchy1234/CiviPulse/fork) | [📢 Share it](https://twitter.com/intent/tweet?text=Check%20out%20CiviPulse%20-%20A%20community-driven%20platform%20for%20civic%20engagement!&url=https://github.com/sahilchy1234/CiviPulse)**
+  **[⭐ Star this repo](https://github.com/sahilchy1234/Civic_Pulse) | [🔄 Fork it](https://github.com/sahilchy1234/Civic_Pulse/fork) | [📢 Share it](https://twitter.com/intent/tweet?text=Check%20out%20CiviPulse%20-%20A%20community-driven%20platform%20for%20civic%20engagement!&url=https://github.com/sahilchy1234/Civic_Pulse)**
 </div>
 
-
-[1](https://github.com/Ericthestein/Firebase-Flutter-Template)
-[2](https://firebase.google.com/docs/studio/custom-templates)
-[3](https://www.appoverride.com/write-a-good-readme-md-file-for-your-flutter-project/)
-[4](https://gitlab.com/rafaelanno-labo/template/template-flutter-app/-/blob/main/README.md)
-[5](https://www.walturn.com/insights/how-to-create-an-effective-flutter-readme)
-[6](https://codewithandrea.com/videos/starter-architecture-flutter-firebase/)
-[7](https://docs.flutter.dev/packages-and-plugins/developing-packages)
-[8](https://developers.connectycube.com/flutter/firebase-setup-guide/)
-[9](https://rahuldkjain.github.io/gh-profile-readme-generator/)
