@@ -25,6 +25,30 @@
 
 ---
 
+
+## 🚀 Try Civic Pulse
+
+### 📱 Download Mobile App
+Get the Android app to report civic issues in your community.
+
+**[Download APK](https://drive.google.com/file/d/1OqR9PclEfYGUq4BRX7cO2SU3QNSB9-WV/view?usp=sharing)**
+
+### 🛠️ Admin Dashboard
+Access the web-based admin panel to manage reports and analytics.
+
+**[Open Admin Panel](https://civicsense-cca11.web.app/)**
+
+ADMIN CREDIANTALS
+Email: admin@civicsense.com Password: Admin@Civic2024
+<img width="1531" height="161" alt="image" src="https://github.com/user-attachments/assets/d9a97d6f-cc04-4609-b00e-44d6608a7eb4" />
+
+
+---
+
+**Quick Start:** Download the app → Install → Create account → Start reporting issues in your area!
+
+The mobile app lets you report problems with photos and location, while the admin dashboard provides tools for managing and tracking issue resolution progress.
+
 ## 🌟 Features
 
 <table>
