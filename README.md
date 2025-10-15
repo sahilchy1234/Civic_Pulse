@@ -40,7 +40,7 @@ Access the web-based admin panel to manage reports and analytics.
 
 ADMIN CREDIANTALS
 Email: admin@civicsense.com Password: Admin@Civic2024
-<img width="1531" height="161" alt="image" src="https://github.com/user-attachments/assets/d9a97d6f-cc04-4609-b00e-44d6608a7eb4" />
+<!-- <img width="1531" height="161" alt="image" src="https://github.com/user-attachments/assets/d9a97d6f-cc04-4609-b00e-44d6608a7eb4" /> -->
 
 
 ---
