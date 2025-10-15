@@ -328,8 +328,6 @@ MIT License - feel free to use this project for personal and commercial purposes
 
 **Sahil Alom Choudhury** - *Project Maintainer*
 
-[![Email](https://img.shields.io/badge/Email-sahilalomchoudhury031@gmailhttps://img.shields.io/badge/GitHub-sahilchy1234-black?style=for-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect://linkedin.com/in/sahilchy>
   <h3>🏛️ Building Better Communities Together 🏛️</h3>
   <p><i>Made with ❤️ by developers who care about civic engagement</i></p>
   
