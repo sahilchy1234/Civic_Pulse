@@ -299,25 +299,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 MIT License - feel free to use this project for personal and commercial purposes.
 ```
 
-## 🙏 Acknowledgments
 
-<div align="center">
-  
-**Special Thanks To:**
-
-[![Flutter](https://img.shields.io/badge/Flutter-Team-blue?style=flatebase](https://img.shields.io/badge/Firebase-Team-orange?style=flat-square&logohttps://img.shields.io/badge/Google-Maps-green?
-
-*And the amazing open-source community! 🌟*
-
-</div>
-
-## 📞 Contact & Connect
-
-<div align="center">
-
-**Sahil Alom Choudhury** - *Project Maintainer*
-
-[![Email](https://img.shields.io/badge/Email-sahilalomchoudhury031@gmail.com-red?style=for-https://img.shields.io/badge/GitHub-sahilchy1234-black?style=for-![Phone](https://img.shields.io/badge/Phone-+91_8099750973-green?style=for-the-***
 
 <div align="center">
   <h3>🏛️ Building Better Communities Together 🏛️</h3>
